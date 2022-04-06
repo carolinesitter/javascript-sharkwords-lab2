@@ -32,6 +32,9 @@ const generateLetterButtons = () => {
   const letterButtonContainer = document.querySelector('#letter-buttons');
   for (const char of ALPHABET) {
     letterButtonContainer.insertAdjacentHTML('beforeend', `<button>${char}</button>`);
+    // querySelector('#').addEventListener('click', disableLetterButton=> {
+    //   const letter = button.innerHTML;
+    // });
   }
 };
 
@@ -43,14 +46,46 @@ const disableLetterButton = (buttonEl) => {
   buttonEl.disabled = true;
 };
 
+const disableAllLetterButtons = () => {
+  const buttons = document.querySelectorAll('button');
+
 // Return `true` if `letter` is in the word.
 //
 const isLetterInWord = (letter) => document.querySelector(`div.${letter}`) !== null;
 
 // Called when `letter` is in word. Update contents of divs with `letter`.
 //
-const handleCorrectGuess = (letter) => {
-  // Replace this with your code
+const handleCorrectGuess = (letter, word) => {
+  
+  
+  // display letter at correct location in div
+  // event handlers for alphabet
+  // put together the click handlers/buttons
+  // listeners for those letters
+  // if they guess correctly, update letters in word and show correct letters
+  //first check if letter is in word
+  // if yes, call handlecorrect guess which will loop over letter in word
+  // and return correct letters/values
+
+
+// add event listener for button 
+  
+
+  
+  // assign a variable to grab all divs
+  const allDivs = document.querySelectorAll(`div.${letter}`);
+
+  // loop through divs and check if div equals letter
+    for (const div of allDivs) {
+      if (word[letter]) {
+        div.innerHTML = letter;
+        correctGuesses += 1;
+      }
+      if (correctGuesses === word.length) {
+
+      } disableAllLetterButtons();
+      document.querySelector('#win').style.display = 'block';
+      }
 };
 
 //
@@ -62,7 +97,19 @@ const handleCorrectGuess = (letter) => {
 
 const handleWrongGuess = () => {
   numWrong += 1;
-  // Replace this with your code
+
+  //can format document like this
+  document
+    .querySelector('#shark-img img')
+    //display how many guesses you have wrong
+    .setAttribute('src', `/static/images/guess${numWrong}.png`);
+
+  if (numWrong === 5) {
+    // also disable buttons to end game
+    disableAllLetterButtons();
+    // ask if they want to play again
+    document.querySelector('#play-again').style.display = 'block';
+  }
 };
 
 //  Reset game state. Called before restarting the game.
@@ -79,11 +126,32 @@ const resetGame = () => {
   createDivsForChars(word);
   generateLetterButtons();
 
-  for (const button of document.querySelectorAll('button')) {
-    // add an event handler to handle clicking on a letter button
-    // YOUR CODE HERE
-  }
+  const buttons = document.querySelectorAll('button');
+  // add an event handler to handle clicking on a letter button
 
-  // add an event handler to handle clicking on the Play Again button
-  // YOUR CODE HERE
+  // running through each button to create event listener
+  for (const button of buttons) {
+    button.addEventListener('click', (evt) => {
+      // create a variable for clickedBtn which is event target
+      // whatever button they click becomes the clicked button
+      const clickedBtn = evt.target; // you can also use button to access this element
+      // when that happens, disable clickedBtn
+      disableLetterButton(clickedBtn);
+
+      // assign variable letter to pull out value of clicked button object element
+      const letter = clickedBtn.innerHTML;
+
+      // if letter is in word is true or not
+      if (isLetterInWord(letter)) {
+        handleCorrectGuess(letter, word);
+      } else {
+        handleWrongGuess();
+      }
+    });
+  }
+  // add an event handler to handle clicking on the Play Again button 
+  document.querySelector('#play-again').addEventListener('click', resetGame);
+  // add event handler to handle clicking on win and resetting game 
+  document.querySelector('#win').addEventListener('click', resetGame);
+
 })();
